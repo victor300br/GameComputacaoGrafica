@@ -1,0 +1,2 @@
+# pygame-ce é compatível com Python mais recente (ex.: 3.14); API igual à do pygame.
+pygame-ce>=2.5.0
