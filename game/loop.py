@@ -1,5 +1,3 @@
-"""Loop principal: menu inicial + PyGame + buffer lógico do jogo."""
-
 from __future__ import annotations
 
 from enum import Enum, auto
@@ -18,11 +16,13 @@ from game.main_menu import (
     menu_window_size,
     scale_menu_background,
 )
+from professor.runner import LAB_H, LAB_W, ProfessorLab
 
 
 class _AppPhase(Enum):
     MENU = auto()
     CREDITS = auto()
+    PROFESSOR = auto()
     PLAYING = auto()
     VICTORY = auto()
 
@@ -51,13 +51,15 @@ def run() -> None:
     phase = _AppPhase.MENU
     menu_rects = layout_menu_rects(menu_w, menu_h)
     game: Game | None = None
+    prof_lab: ProfessorLab | None = None
     running = True
 
     def return_to_main_menu() -> None:
-        nonlocal game, phase, screen, menu_bg_scaled
+        nonlocal game, phase, screen, menu_bg_scaled, prof_lab
         pygame.mixer.music.stop()
         pygame.mixer.music.set_endevent()
         game = None
+        prof_lab = None
         phase = _AppPhase.MENU
         screen = pygame.display.set_mode((menu_w, menu_h))
         pygame.display.set_caption("Lost Cave")
@@ -137,9 +139,19 @@ def run() -> None:
                         phase = _AppPhase.PLAYING
                     elif menu_rects.credits.collidepoint(mx, my):
                         phase = _AppPhase.CREDITS
+                    elif menu_rects.professor.collidepoint(mx, my):
+                        prof_lab = ProfessorLab()
+                        screen = pygame.display.set_mode((LAB_W, LAB_H))
+                        pygame.display.set_caption("Lost Cave — Laboratorio CG | Esc = menu")
+                        phase = _AppPhase.PROFESSOR
                 elif event.type == pygame.KEYDOWN:
                     if event.key in (pygame.K_ESCAPE, pygame.K_q):
                         running = False
+                    elif event.key == pygame.K_p:
+                        prof_lab = ProfessorLab()
+                        screen = pygame.display.set_mode((LAB_W, LAB_H))
+                        pygame.display.set_caption("Lost Cave — Laboratorio CG | Esc = menu")
+                        phase = _AppPhase.PROFESSOR
                     elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
                         game = Game()
                         gw = game.tilemap.width * config.TILE_SIZE * config.WINDOW_SCALE
@@ -147,6 +159,13 @@ def run() -> None:
                         screen = pygame.display.set_mode((gw, gh))
                         pygame.display.set_caption("Lost Cave — WASD | R checkpoint | Esc menu")
                         phase = _AppPhase.PLAYING
+
+            elif phase == _AppPhase.PROFESSOR and prof_lab is not None:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return_to_main_menu()
+                    else:
+                        prof_lab.handle_key(event.key)
 
             elif phase == _AppPhase.CREDITS:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -170,6 +189,9 @@ def run() -> None:
                 font_btn,
                 font_name,
             )
+        elif phase == _AppPhase.PROFESSOR and prof_lab is not None:
+            prof_lab.update(dt)
+            screen.blit(prof_lab.redraw(), (0, 0))
         elif phase == _AppPhase.VICTORY:
             sw, sh = screen.get_size()
             if victory_raw is not None:

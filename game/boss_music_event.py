@@ -1,4 +1,4 @@
-"""Evento disparado quando a faixa de música do boss termina (para repetir a partir do corte)."""
+# USEREVENT: fim da faixa do mixer (loop do boss volta ao corte).
 
 from __future__ import annotations
 
