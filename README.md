@@ -71,6 +71,22 @@ python -m venv venv
 
 ---
 
+## 3️⃣ Ativar o ambiente virtual
+
+### 🪟 Windows (PowerShell)
+
+```powershell
+./venv/Scripts/Activate.ps1
+```
+
+### 🐧 Linux / 🍎 macOS
+
+```bash
+source venv/bin/activate
+```
+
+---
+
 ## 4️⃣ Instalar as dependências
 
 ```sh
