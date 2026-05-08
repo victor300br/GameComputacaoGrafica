@@ -1,4 +1,4 @@
-"""Mapa em grade: cada célula é um tile de jogo (16x16 px ao desenhar)."""
+# Grade de tiles; desenho em config.TILE_SIZE px.
 
 from __future__ import annotations
 
@@ -63,7 +63,7 @@ class TileMap:
 
     @classmethod
     def from_strings(cls, lines: list[str]) -> ParsedLevel:
-        """'@' ou 'p' = spawn; 'b' = boss (vira chão); '1'/'2'/'3' = colunas de pedra (viram chão)."""
+        # @/p spawn; b/B boss; 1/2/3 marcam colunas de queda de pedra.
         boss_cells: list[tuple[int, int]] = []
         rock_marker_x: dict[str, int] = {}
         h = len(lines)

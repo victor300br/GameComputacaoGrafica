@@ -1,5 +1,3 @@
-"""Boss arena: grande inimigo com patrulha horizontal e investida."""
-
 from __future__ import annotations
 
 import math
@@ -25,8 +23,6 @@ class BossState(Enum):
 
 
 class Boss:
-    """Hitbox BOSS_TILE_W × BOSS_TILE_H tiles; âncora no canto superior esquerdo (float)."""
-
     __slots__ = (
         "x",
         "y",
@@ -78,7 +74,6 @@ class Boss:
         self.recover_timer = 0.0
 
     def use_white_damage_flash(self) -> bool:
-        """Um passo “on” do piscar branco (sprite ou fallback sólido)."""
         if self.dying:
             return int(self._flash_phase / config.BOSS_DEATH_FLASH_INTERVAL_SEC) % 2 == 0
         if self.hurt_flash_remaining > 0:
@@ -86,7 +81,6 @@ class Boss:
         return False
 
     def render_colors(self) -> tuple[tuple[int, int, int], tuple[int, int, int]]:
-        """Fallback retângulo quando não há sprites; branco quando piscando."""
         base_outer = config.COLOR_BOSS_DARK
         base_inner = config.COLOR_BOSS
         if self.use_white_damage_flash():
@@ -95,12 +89,10 @@ class Boss:
         return (base_outer, base_inner)
 
     def sprite_frame_index(self) -> int:
-        """Frame 0..4 correspondendo a boss_1..boss_5."""
         step = max(config.BOSS_ANIM_FRAME_SEC, 1e-4)
         return int(self._anim_elapsed / step) % 5
 
     def sprite_face_right(self) -> bool:
-        """Sprite base olha para a esquerda; espelha quando anda/investe para a direita."""
         if self.state == BossState.CHARGE:
             return self.charge_dir > 0.0
         return self.patrol_dir > 0.0
@@ -121,7 +113,6 @@ class Boss:
         return self._tiles_block_boss(tilemap, int(math.floor(x_float)))
 
     def try_move_x(self, tilemap, delta: float) -> bool:
-        """Move horizontalmente até `delta` tiles; para no último válido se bater."""
         if abs(delta) < 1e-9:
             return False
         steps = max(1, min(12, int(math.ceil(abs(delta) * 12))))
@@ -173,7 +164,6 @@ class Boss:
         player: Player,
         on_charge_wall_impact,
     ) -> bool:
-        """Retorna True se o boss deve ser removido (derrotado)."""
         if self.dying:
             self.death_timer -= dt
             self._flash_phase += dt

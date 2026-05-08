@@ -1,5 +1,3 @@
-"""Jogador em coordenadas de tile (grade), com interpolação visual entre células."""
-
 from __future__ import annotations
 
 import config
@@ -55,7 +53,6 @@ class Player:
             self.draw_y = self._target_y
 
     def sync_draw_to_tile(self) -> None:
-        """Usado ao restaurar checkpoint."""
         self.draw_x = float(self.tile_x)
         self.draw_y = float(self.tile_y)
         self._start_x = self.draw_x

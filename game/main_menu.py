@@ -1,5 +1,3 @@
-"""Menu inicial e tela de créditos."""
-
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -14,13 +12,14 @@ import config
 class MenuRects:
     play: pygame.Rect
     credits: pygame.Rect
+    professor: pygame.Rect
     back: pygame.Rect
 
 
 _ASSET_DIR = Path(__file__).resolve().parent.parent / "assets"
 MENU_BG_FILE = _ASSET_DIR / "menu_bg.png"
 VICTORY_BG_FILE = _ASSET_DIR / "victory.png"
-# Lado maior da janela do menu (mantém proporção do fundo).
+# Escala o fundo para caber com lado maior = isto (px).
 MENU_WINDOW_MAX_SIDE = 820
 
 
@@ -64,12 +63,14 @@ def scale_menu_background(bg: pygame.Surface, win_w: int, win_h: int) -> pygame.
 
 
 def layout_menu_rects(win_w: int, win_h: int) -> MenuRects:
-    bw, bh = 220, 52
+    bw, bh = 280, 48
     cx = win_w // 2 - bw // 2
-    play = pygame.Rect(cx, int(win_h * 0.68), bw, bh)
-    credits = pygame.Rect(cx, int(win_h * 0.68) + bh + 14, bw, bh)
+    base_y = int(win_h * 0.54)
+    play = pygame.Rect(cx, base_y, bw, bh)
+    credits = pygame.Rect(cx, base_y + bh + 12, bw, bh)
+    professor = pygame.Rect(cx, base_y + 2 * (bh + 12), bw, bh)
     back = pygame.Rect(cx, int(win_h * 0.82), bw, bh)
-    return MenuRects(play=play, credits=credits, back=back)
+    return MenuRects(play=play, credits=credits, professor=professor, back=back)
 
 
 def draw_main_menu(
@@ -82,6 +83,7 @@ def draw_main_menu(
     for rect, label in (
         (rects.play, "Jogar"),
         (rects.credits, "Créditos"),
+        (rects.professor, "Para o professor"),
     ):
         pygame.draw.rect(screen, config.UI_MID, rect)
         pygame.draw.rect(screen, config.UI_SHADOW, rect, 3)

@@ -1,5 +1,3 @@
-"""Estado principal: mapa + jogador + física de pedras + checkpoint + troca de fase."""
-
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -210,7 +208,6 @@ class Game:
         return None
 
     def _crop_visible_sprite_area(self, src: pygame.Surface) -> pygame.Surface:
-        """Remove bordas transparentes para o conteúdo preencher melhor o tile."""
         bounds = src.get_bounding_rect()
         if bounds.width <= 0 or bounds.height <= 0:
             return src
@@ -504,7 +501,7 @@ class Game:
         return _aabb_overlap(sl, st, sw, sh, pl, pt, pw, ph)
 
     def _fall_sweep_overlaps_player(self, tx: int, y0: int, y1: int) -> bool:
-        """União vertical dos tiles y0..y1 na coluna tx (pedra + célula de aterrissagem)."""
+        # AABB da coluna tx entre y0 e y1 (pedra em queda + tile de baixo).
         ts = config.TILE_SIZE
         pl, pt, pw, ph = self._player_aabb_pixels()
         left = tx * ts
@@ -781,7 +778,6 @@ class Game:
                 elif tile == Tile.STONE:
                     self.buffer.fill_rect(x, y, ts, ts, config.COLOR_STONE)
                 elif tile == Tile.BREAKABLE and breakable_sprite is not None:
-                    # Base de chão para que áreas transparentes do sprite não fiquem pretas.
                     self.buffer.fill_rect(x, y, ts, ts, config.COLOR_FLOOR)
                     self.buffer.surface.blit(breakable_sprite, (x, y))
                 elif tile == Tile.CHECKPOINT and checkpoint_sprite is not None:
@@ -867,7 +863,6 @@ class Game:
         elif fdx != 0:
             base = self._player_side_scaled
             if base is not None:
-                # Arte base = personagem olhando para a direita; espelha ao ir para a esquerda.
                 psurf = pygame.transform.flip(base, True, False) if fdx < 0 else base
         if psurf is None:
             psurf = self._player_down_scaled or self._player_up_scaled or self._player_side_scaled
@@ -887,7 +882,6 @@ class Game:
         return self.tilemap.get_tile(tx, ty) == Tile.CHEST
 
     def player_can_finish_game_from_chest(self) -> bool:
-        """Em cima do baú ou num tile vizinho (para abrir com Enter)."""
         if self._game_over:
             return False
         px, py = self.player.tile_x, self.player.tile_y

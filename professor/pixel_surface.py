@@ -3,7 +3,7 @@ from __future__ import annotations
 import pygame
 
 
-class Framebuffer:
+class PixelSurface:
     def __init__(self, width: int, height: int) -> None:
         self.width = width
         self.height = height
@@ -16,12 +16,8 @@ class Framebuffer:
         if 0 <= x < self.width and 0 <= y < self.height:
             self.surface.set_at((x, y), color)
 
-    def fill_rect(
-        self,
-        x: int,
-        y: int,
-        w: int,
-        h: int,
-        color: tuple[int, int, int],
-    ) -> None:
-        pygame.draw.rect(self.surface, color, (x, y, w, h))
+    def get_pixel(self, x: int, y: int) -> tuple[int, int, int] | None:
+        if not (0 <= x < self.width and 0 <= y < self.height):
+            return None
+        c = self.surface.get_at((x, y))
+        return (int(c[0]), int(c[1]), int(c[2]))
